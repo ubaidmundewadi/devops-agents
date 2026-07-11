@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Infrastructure Agent Dashboard</title>
+    <meta name="description" content="An autonomous multi-agent assistant for provisioning and deploying AWS cloud infrastructure using Terraform, featuring human-in-the-loop controls.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Link CSS -->
+    <link rel="stylesheet" href="/static/style.css?v=2.2">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Main Dashboard Header -->
+        <header id="dashboard-header">
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="pulse-ring"></div>
+                    <h1>AWS Infra Agent</h1>
+                    <span class="version-tag">v2.0 Beta</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Grid Layout -->
+        <main id="dashboard-grid">
+            
+            <!-- Left Panel: Workflow Progress & Settings -->
+            <section id="sidebar-panel">
+                <div id="aws-creds-banner" class="creds-banner creds-pending">
+                    <span class="banner-icon">🔍</span>
+                    <span class="banner-text">Checking AWS credentials...</span>
+                </div>
+
+                <div class="sidebar-card timeline-card">
+                    <h2>Deployment Pipeline</h2>
+                    <div id="timeline-flow" class="timeline">
+                        <div id="step-1" class="timeline-step step-pending">
+                            <div class="step-icon">1</div>
+                            <div class="step-content">
+                                <h3>Requirements Gathering</h3>
+                            </div>
+                        </div>
+                        <div id="step-2" class="timeline-step step-pending">
+                            <div class="step-icon">2</div>
+                            <div class="step-content">
+                                <h3>Terraform Generation</h3>
+                            </div>
+                        </div>
+                        <div id="step-3" class="timeline-step step-pending">
+                            <div class="step-icon">3</div>
+                            <div class="step-content">
+                                <h3>Format & Validate</h3>
+                            </div>
+                        </div>
+                        <div id="step-4" class="timeline-step step-pending">
+                            <div class="step-icon">4</div>
+                            <div class="step-content">
+                                <h3>HIL Script Review</h3>
+                            </div>
+                        </div>
+                        <div id="step-5" class="timeline-step step-pending">
+                            <div class="step-icon">5</div>
+                            <div class="step-content">
+                                <h3>Plan & Verification</h3>
+                            </div>
+                        </div>
+                        <div id="step-6" class="timeline-step step-pending">
+                            <div class="step-icon">6</div>
+                            <div class="step-content">
+                                <h3>Cloud Deployment</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Center Panel: Chat Canvas and HITL Interaction -->
+            <section id="chat-canvas-panel">
+                
+                <!-- Chat Message Stream -->
+                <div id="chat-message-container" class="scroll-container">
+                    <div class="chat-welcome-msg">
+                        <div class="welcome-icon">⚡</div>
+                        <h2>Autonomous AWS Infrastructure Orchestrator</h2>
+                        <p>Welcome! Tell me what AWS resources you want to create today (e.g. "I want to deploy a secure VPC and an EC2 instance in us-west-2").</p>
+                        <p class="welcome-tip">I will build and validate the Terraform configuration, showing you the plans and scripts for approval before any resources are provisioned.</p>
+                    </div>
+                    <!-- Messages get appended dynamically here -->
+                    <div id="messages-list"></div>
+                    <div id="bot-typing-indicator" class="typing-indicator hidden">
+                        <div class="spinner"></div>
+                        <span>Agent is working...</span>
+                    </div>
+                </div>
+
+                <!-- Interactive HITL Panels Container -->
+                <div id="interactive-panel-container" class="hidden">
+                    <!-- Dynamic forms and cards injected here -->
+                </div>
+
+                <!-- Chat Footer Input -->
+                <footer id="chat-input-footer">
+                    <form id="chat-form" class="input-form">
+                        <textarea 
+                            id="user-chat-input" 
+                            placeholder="Describe your AWS infrastructure requirements..." 
+                            rows="1" 
+                            required
+                        ></textarea>
+                        <button type="submit" id="send-input-button" class="btn-primary" aria-label="Send message">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </button>
+                    </form>
+                </footer>
+            </section>
+
+        </main>
+    </div>
+    <!-- Script JS -->
+    <script src="/static/app.js?v=2.4"></script>
+</body>
+</html>
