@@ -1,4 +1,4 @@
-apiVersion: kagent.dev/v1alpha1
+apiVersion: kagent.dev/v1alpha2
 kind: Agent
 metadata:
   name: infra-agent
@@ -6,55 +6,30 @@ metadata:
   labels:
     app: infra-agent
 spec:
-  # Container image containing the customized agent code, tools, and Terraform binary
-  image: ubaidmundewadidocker/devops-agents:latest
+  # Set Agent type to BYO (Bring Your Own image running our custom code)
+  type: BYO
   
-  # Model Selection (Kagent defaults to gemini-3.5-flash)
-  model: gemini-3.5-flash
-  
-  # Inject the System Persona Instructions
-  systemInstructions: |
-    You are an AWS Cloud Infrastructure Provisioning Agent. Your job is to guide the user in provisioning AWS resources via Terraform in exactly 6 steps:
-    1. Gather requirements. Greet the user, understand what resource they want, and determine what required parameters are needed for that resource (based on latest AWS provider version 5.x). Use `ask_user_for_info` to collect any missing details. You MUST ask for the AWS region if not specified, and always include the `provider "aws" { region = "..." }` block in your generated code. Additionally, for EC2 instances, you MUST restrict the instance type choice to ONLY these 4 allowed options: 't3.micro', 't3.small', 'c7i-flex.large', and 'm7i-flex.large'. If the user requests any other type, explain the restriction and ask them to select one of the allowed types.
-    2. Generate Terraform script. Write the configuration code and call `save_terraform_code` to save it locally. Crucially, when generating EC2 instance resources, you MUST NOT use hardcoded default AMI IDs. If the user explicitly provides a specific AMI ID (e.g. starting with 'ami-'), use that ID directly in the resource block. Otherwise, always define a dynamic `aws_ami` data source (searching for the latest Amazon Linux 2023 AMI, owners=['amazon'], filter name='name' with values=['al2023-ami-*-x86_64']) and reference its ID in the instance resource. Also, double-check that the instance type is strictly one of the 4 allowed options ('t3.micro', 't3.small', 'c7i-flex.large', 'm7i-flex.large') and NEVER generate scripts using other types.
-    3. Format & Validate. Call `run_terraform_fmt_validate`. If validation fails, correct the code, save it locally, and re-validate until it passes.
-    4. Request script approval. Once the script is valid, call `request_script_approval` to present the code to the user. If they reject/modify, correct it, save, re-validate, and request approval again.
-    5. Plan and Review. Call `run_terraform_plan` to generate a plan. Present the output to the user by calling `request_plan_approval`. If rejected, ask for feedback, apply changes (loop back to step 2), and generate a new plan.
-    6. Deploy. Once the plan is approved, call `run_terraform_apply` to provision the resources. Report success to the user.
-
-    Strictly follow this exact order. Always report status progress using chat texts as you transition. Speak directly, professionally, and concisely.
-    Do NOT use Markdown headers (like `#`, `##`, `###`) in your chat responses. Keep your responses clean and easy to read using simple paragraphs, bold text, or bullet points instead.
-
-  # Bind the ServiceAccount with the IAM role annotation for AWS OIDC credentials
-  serviceAccountName: infra-agent-sa
-
-  # Persistent Session Storage Volume for local state memory
-  persistence:
-    enabled: true
-    storageClassName: gp2 # Or your cloud provider standard storage class
-    size: 1Gi
-    mountPath: /app/sessions_store
-
-  # Reference the credentials Secret for external keys (e.g. Gemini API Key)
-  secretRef:
-    name: infra-agent-secrets
-
-  # Define the specialized tools mapped to this agent
-  tools:
-    - name: save_terraform_code
-      description: "Saves the generated Terraform configuration code to a local main.tf file."
-    - name: run_terraform_fmt_validate
-      description: "Runs terraform fmt and terraform validate to check HCL code syntax."
-    - name: run_terraform_plan
-      description: "Generates an execution plan by running terraform plan."
-    - name: run_terraform_apply
-      description: "Deploys the cloud infrastructure by executing terraform apply."
-    - name: ask_user_for_info
-      type: HumanInTheLoop
-      description: "Asks the user for missing configuration parameters."
-    - name: request_script_approval
-      type: HumanInTheLoop
-      description: "Presents the generated Terraform code to the user for manual approval."
-    - name: request_plan_approval
-      type: HumanInTheLoop
-      description: "Presents the Terraform plan output to the user for manual validation."
+  byo:
+    deployment:
+      # The custom container image built with the python server & terraform CLI
+      image: ubaidmundewadidocker/devops-agents:latest
+      
+      # Bind the EKS ServiceAccount for keyless AWS IAM permissions (IRSA)
+      serviceAccountName: infra-agent-sa
+      
+      # Inject the required Gemini API Key from the secret
+      env:
+      - name: GEMINI_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: infra-agent-secrets
+            key: gemini-api-key
+            
+      # Mount a writable emptyDir volume for the Terraform workspace
+      volumeMounts:
+      - name: terraform-workspace
+        mountPath: /app/terraform
+        
+      volumes:
+      - name: terraform-workspace
+        emptyDir: {}
