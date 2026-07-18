@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: infra-agent-service
+  namespace: default
+  labels:
+    app: infra-agent
+spec:
+  # Use LoadBalancer for cloud providers (AWS ELB) or NodePort for local/on-premise testing.
+  # Change type to LoadBalancer if deploying in EKS and you want an external load balancer created automatically.
+  type: NodePort
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30080 # Exposes http://<node-ip>:30080 in local Kubernetes clusters (like Minikube)
+    protocol: TCP
+    name: http
+  selector:
+    app: infra-agent
