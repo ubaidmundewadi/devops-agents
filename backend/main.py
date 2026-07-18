@@ -25,6 +25,12 @@ os.makedirs(TERRAFORM_DIR, exist_ok=True)
 # Active connections registry
 sessions = {}
 
+@app.get("/.well-known/agent-card.json")
+async def agent_card():
+    """Kagent-native readiness probe endpoint."""
+    return {"schema_version": "v1", "name": "infra-agent"}
+
+
 @app.get("/")
 async def get_index():
     """Serves the main frontend page."""

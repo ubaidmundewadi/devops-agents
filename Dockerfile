@@ -27,8 +27,8 @@ COPY backend/ ./backend/
 COPY frontend/ ./frontend/
 COPY terraform/ ./terraform/
 
-# Expose port 8000 for FastAPI / WebSockets
-EXPOSE 8000
+# Expose port 8080 for Kagent A2A compatibility / WebSockets
+EXPOSE 8080
 
-# Run the FastAPI server using Uvicorn
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the FastAPI server using Uvicorn on port 8080
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8080"]

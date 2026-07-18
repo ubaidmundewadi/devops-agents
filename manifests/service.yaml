@@ -10,10 +10,10 @@ spec:
   # Change type to LoadBalancer if deploying in EKS and you want an external load balancer created automatically.
   type: NodePort
   ports:
-  - port: 8000
-    targetPort: 8000
+  - port: 8080
+    targetPort: 8080
     nodePort: 30080 # Exposes http://<node-ip>:30080 in local Kubernetes clusters (like Minikube)
     protocol: TCP
     name: http
   selector:
-    app: infra-agent
+    app.kubernetes.io/name: infra-agent
