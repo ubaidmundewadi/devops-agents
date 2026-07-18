@@ -31,7 +31,7 @@ Follow these steps to run the application on your local machine:
 
 ### 1. Clone the Repository
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/ubaidmundewadi/devops-agents.git
 cd devops-agents
 ```
 
