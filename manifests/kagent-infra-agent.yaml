@@ -13,6 +13,7 @@ spec:
     deployment:
       # The custom container image built with the python server & terraform CLI
       image: ubaidmundewadidocker/devops-agents:latest
+      imagePullPolicy: Always
       
       # Bind the EKS ServiceAccount for keyless AWS IAM permissions (IRSA)
       serviceAccountName: infra-agent-sa
