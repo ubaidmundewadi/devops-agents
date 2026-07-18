@@ -7,7 +7,7 @@ metadata:
     app: infra-agent
 spec:
   # Container image containing the customized agent code, tools, and Terraform binary
-  image: ubaidmundewadi/devops-agents:latest
+  image: ubaidmundewadidocker/devops-agents:latest
   
   # Model Selection (Kagent defaults to gemini-3.5-flash)
   model: gemini-3.5-flash

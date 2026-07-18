@@ -18,7 +18,7 @@ spec:
       serviceAccountName: infra-agent-sa
       containers:
       - name: infra-agent
-        image: ubaidmundewadi/devops-agents:latest # Replace with your pushed image tag
+        image: ubaidmundewadidocker/devops-agents:latest # Replace with your pushed image tag
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
