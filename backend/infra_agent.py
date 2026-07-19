@@ -218,21 +218,13 @@ class InfraAgentSession:
                 if os.path.exists(session_file_json) or os.path.exists(session_file_raw):
                     resume_id = self.conversation_id
 
-            # Dynamically connect to the remote AWS MCP server via SSE if URL is configured
-            mcp_servers = []
-            aws_mcp_url = os.environ.get("AWS_MCP_SSE_URL")
-            if aws_mcp_url:
-                headers = {}
-                aws_mcp_token = os.environ.get("AWS_MCP_SSE_TOKEN")
-                if aws_mcp_token:
-                    headers["Authorization"] = f"Bearer {aws_mcp_token}"
-                
-                mcp_servers.append(
-                    types.McpSseServer(
-                        url=aws_mcp_url,
-                        headers=headers if headers else None
-                    )
+            # Connect to the AWS MCP server locally via Stdio (runs official Node package inside pod)
+            mcp_servers = [
+                types.McpStdioServer(
+                    command="npx",
+                    args=["-y", "@modelcontextprotocol/server-aws-sdk"]
                 )
+            ]
 
             # Create agent configuration
             config = LocalAgentConfig(

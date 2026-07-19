@@ -25,18 +25,6 @@ spec:
           secretKeyRef:
             name: infra-agent-secrets
             key: gemini-api-key
-      - name: AWS_MCP_SSE_URL
-        valueFrom:
-          secretKeyRef:
-            name: infra-agent-secrets
-            key: aws-mcp-sse-url
-            optional: true
-      - name: AWS_MCP_SSE_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: infra-agent-secrets
-            key: aws-mcp-sse-token
-            optional: true
             
       # Mount a writable emptyDir volume for the Terraform workspace
       volumeMounts:
